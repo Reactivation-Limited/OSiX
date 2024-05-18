@@ -5,6 +5,15 @@
 #include <sys/sem.h>
 #include <system_error>
 
+#ifdef _SEM_SEMUN_UNDEFINED
+union semun {
+  int val;               /* Value for SETVAL */
+  struct semid_ds *buf;  /* Buffer for IPC_STAT, IPC_SET */
+  unsigned short *array; /* Array for GETALL, SETALL */
+  struct seminfo *__buf; /* Buffer for IPC_INFO (Linux-specific) */
+};
+#endif
+
 #define OPERATION_COUNTER 0
 #define REF_COUNT 1
 #define SEMAPHORES 2

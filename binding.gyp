@@ -3,7 +3,7 @@
     "target_name": "OSX",
     "sources": [ "src/error.cpp", "src/semaphore-sysv.cpp", "src/semaphore-posix.cpp", "src/flock.cpp", "src/OSX.cpp" ],
     "include_dirs": ["node_modules/node-addon-api", "src-vendor/errnoname", "/usr/include"],
-    "cflags_cc": ["-fexceptions", "-frtti", "-std=c++17" ],
+    "cflags_cc": ["-fexceptions", "-frtti", "-std=c++17", "-pthread" ],
     "conditions": [
       ["OS=='mac'", {
         "CXX":"/usr/bin/clang++",

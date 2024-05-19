@@ -117,7 +117,7 @@ describe('Semaphore', () => {
     let child;
     beforeAll(async () => {
       semaphore = Semaphore.createExclusive(name, 0o600, 1);
-      child = fork('./test/semaphore-sysv-child.js', ['child'], {
+      child = fork('./test/semaphore-sysv-child.js', [name], {
         stdio: [process.stdin, process.stdout, process.stderr, 'ipc'],
         env: { DEBUG_COLORS: '', DEBUG: process.env.DEBUG }
       });
@@ -136,7 +136,6 @@ describe('Semaphore', () => {
         });
       });
       semaphore.close();
-      expect(() => Semaphore.open(name)).toThrowErrnoError('semget', 'ENOENT');
     });
 
     describe('non blocking calls', () => {
@@ -191,5 +190,11 @@ describe('Semaphore', () => {
         semaphore.post();
       });
     });
+  });
+
+  // Note that there is a corner case when the last process crashes and cannot unlink the sem
+  // this is a minor resource leak, and will be corrected when the the next group of processes runs
+  it('should have automatically removed the semaphore when the last process closed it', () => {
+    expect(() => Semaphore.open(name)).toThrowErrnoError('semget', 'ENOENT');
   });
 });

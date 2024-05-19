@@ -2,8 +2,7 @@ const { SemaphoreV: Semaphore } = require('../build/Release/OSX.node');
 
 const debug = require('debug')('semaphore-sysv-child-process');
 
-// the child always decides on the file
-const name = './tmp/semaphore-sysv';
+const name = process.argv[2];
 
 const send = (...args) => {
   debug('child tx', ...args);
@@ -53,7 +52,7 @@ process.on('message', (message) => {
 send(name);
 
 const exit = (code) => {
-  Semaphore.unlink(name);
+  semaphore.close();
   process.exit(code);
 };
 

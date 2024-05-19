@@ -20,10 +20,12 @@ RUN ./configure
 RUN make
 RUN make install
 
+ADD . /root/project
 WORKDIR /root/project
 
-# RUN npm cache clean -f
-# RUN npm install -g n
-# RUN n stable
-# RUN npm ci
-# RUN npm test
+RUN npm cache clean -f
+RUN npm install -g n
+RUN n stable
+RUN npm ci
+RUN npx node-gyp rebuild
+RUN npm test

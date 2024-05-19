@@ -1,6 +1,10 @@
 # OSiX
 
-Some unix IPC primitives for nodejs I have found useful in my private personal projects.
+Some unix IPC primitives for nodejs I have found useful in my private personal projects - `flock` and SystemV semaphores.
+
+** Alpha version, still in development **
+
+TODO: Linux/Uinx builds
 
 ## Why use this lib?
 
@@ -11,8 +15,6 @@ Built and tested on OSX. Working on a Linux build next. I have no plans to suppo
 There is no hand-holding here - these are thin wrappers over the system calls. If a call throws a system error, treat is as a warning that you've made a mistake in your implementation you should investigate.
 
 This is free software. If it breaks you get to keep both pieces. If your application is safety or mission critical, it is up to you to verify that this implementation is suitable for your needs. No liability is accepted for any use or misuse. YMMV.
-
-No breaking changes to the external interfaces of this module are anticipated as the underlying system calls have been stable for decades.
 
 ## Installation
 

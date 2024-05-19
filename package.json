@@ -1,6 +1,6 @@
 {
   "name": "OSiX",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Provides access the IPC system calls on unix based platforms",
   "main": "index.js",
   "scripts": {

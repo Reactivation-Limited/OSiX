@@ -19,8 +19,8 @@
     "node-addon-api": "*",
     "node-gyp": "10.1.0"
   },
-  "author": "",
-  "license": "UNLICENSED",
+  "author": "Jon Cooke, Reactivation Limited",
+  "license": "ISC",
   "gypfile": true,
   "devDependencies": {
     "@eslint/js": "9.2.0",

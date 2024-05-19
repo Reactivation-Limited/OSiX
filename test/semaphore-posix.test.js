@@ -1,4 +1,4 @@
-const os = require('node:os');
+// const os = require('node:os');
 const { fork } = require('node:child_process');
 const childMessages = require('./parent.js');
 const { SemaphoreP } = require('../build/Release/OSX.node');
@@ -97,7 +97,11 @@ describe('SemaphoreP', () => {
 
     // contrary to the man page for sem_*, Darwin returns EBADF if the set_t * passed to sem_wait is nonsense
     // https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/kern/posix_sem.c#L821
-    const BADSEMPTR = os.type() === 'Darwin' ? 'EBADF' : 'EINVAL';
+    // ... but it turns out that Linux just crashes, so replicate the OS X behaviour and return EBADF if the sem has been closed
+    // ... yeah, really you shouldn't do this, but it avoids creating a custom error
+    // ... and I'm probably going to remove posix sems anyway as they are not that useful to me
+    // const BADSEMPTR = os.type() === 'Darwin' ? 'EBADF' : 'EINVAL';
+    const BADSEMPTR = 'EBADF';
 
     it('wait should throw an errno error', () => {
       expect(() => semaphore.wait()).toThrowErrnoError('sem_wait', BADSEMPTR);

@@ -39,13 +39,14 @@ SemaphoreP *SemaphoreP::createExclusive(const char *name, int mode, unsigned int
   return createP(name, O_CREAT | O_EXCL, mode, value);
 }
 
-SemaphoreP *SemaphoreP::create(const char *name, int mode, unsigned int value)
-
-{
+SemaphoreP *SemaphoreP::create(const char *name, int mode, unsigned int value) {
   return createP(name, O_CREAT, mode, value);
 }
 
 void SemaphoreP::wait() {
+  if (s == SEM_FAILED) {
+    throw std::system_error(EBADF, std::system_category(), "sem_wait");
+  }
   int r;
   do {
     r = sem_wait(s);
@@ -56,6 +57,9 @@ void SemaphoreP::wait() {
 }
 
 bool SemaphoreP::trywait() {
+  if (s == SEM_FAILED) {
+    throw std::system_error(EBADF, std::system_category(), "sem_trywait");
+  }
   do {
     if (sem_trywait(s) == 0) {
       return true;
@@ -68,15 +72,22 @@ bool SemaphoreP::trywait() {
 }
 
 void SemaphoreP::post() {
+  if (s == SEM_FAILED) {
+    throw std::system_error(EBADF, std::system_category(), "sem_post");
+  }
   if (sem_post(s) == -1) {
     throw std::system_error(errno, std::system_category(), "sem_post");
   }
 }
 
 void SemaphoreP::close() {
+  if (s == SEM_FAILED) {
+    throw std::system_error(EBADF, std::system_category(), "sem_close");
+  }
   if (sem_close(s) == -1) {
     throw std::system_error(errno, std::system_category(), "sem_close");
   }
+  s = SEM_FAILED;
 }
 
 void SemaphoreP::unlink(const char *name) {

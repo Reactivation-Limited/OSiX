@@ -11,7 +11,7 @@ WORKDIR /root
 
 # build swig 4.2 from source as debian bookworm has only 4.1
 # required for -napi swig target
-RUN git clone https://salsa.debian.org/debian/swig.git
+RUN git clone https://salsa.debian.org/debian/swig.git --depth 1
 # fetch swig build deps
 RUN apt-get install -y bison libpcre2-dev
 

@@ -27,5 +27,4 @@ RUN npm cache clean -f
 RUN npm install -g n
 RUN n stable
 RUN npm ci
-RUN npx node-gyp rebuild
 RUN npm test

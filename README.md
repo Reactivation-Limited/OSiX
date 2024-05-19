@@ -1,16 +1,18 @@
 # OSiX
 
-Some unix IPC primitives for nodejs.
+Some unix IPC primitives for nodejs I have found useful in my private personal projects.
 
 ## Why use this lib?
 
-It's crash proof: file locks and semaphores will be released by the kernel no matter how your process dies, well as long as your kernel isn't buggy.
+It's crash proof: file locks and semaphores should be released by the kernel no matter how your process dies.
 
-During `npm install` the package verifies that the APIs work as expected on your system.
+Built and tested on OSX. Working on a Linux build next. I have no plans to support Windows.
 
-Built and tested on OSX. So far there are no builds for other flavours of unix, contributions welcome.
+There is no hand-holding here - these are thin wrappers over the system calls. If a call throws a system error, treat is as a warning that you've made a mistake in your implementation you should investigate.
 
-There is no hand-holding here - these are thin wrappers over the system calls.
+This is free software. If it breaks you get to keep both pieces. If your application is safety or mission critical, it is up to you to verify that this implementation is suitable for your needs. No liability is accepted for any use or misuse. YMMV.
+
+No breaking changes to the external interfaces of this module are anticipated as the underlying system calls have been stable for decades.
 
 ## Installation
 
@@ -20,9 +22,7 @@ There is no hand-holding here - these are thin wrappers over the system calls.
 
 ### Flock
 
-A simple API that uses the posix `flock` call to implement advisory file locks.
-
-Exposes the posix flock call, but without the bit-twiddling - see `man -s2 flock` for details and the possible error codes.
+A simple API that uses the POSIX `flock` call to implement advisory file locks - see `man -s2 flock` for details and the possible error codes.
 
 ```javascript
 const { Flock } = require('OSiX');
@@ -52,19 +52,19 @@ Flock.unlock(F.fd);
 
 Failed calls will throw an error with `error.code` set to a string matching the errno, just like `fs` does it.
 
-For error codes see `man -s2 flock`
-
-Some nodejs fs functions close the file handle automatically, e.g. `F.readFile`, after which `F.fd` will be undefined preventing you from releasing the lock. All is not lost: locks will eventually be released by the kernel when the last file descriptor referencing the file is closed. Despite that, avoid this situation by using read
-
 ### Semaphore
 
 A simple API that uses the Unix SystemV `semget` family of system calls to create and use semaphores.
 
-For error codes see `man -s2 semget`, `man -s2 semctl` and `man -s2 semop`. EINTR will never be thrown by this implementation.
-
 All operations are performed with `SEM_UNDO` ensuring that semaphores are released by the kernel when the process exits.
 
+For error codes see `man -s2 semget`, `man -s2 semctl` and `man -s2 semop`.
+
+In the case of `EINTR`, the operation will be automatically retried.
+
 See [https://stackoverflow.com/questions/368322/differences-between-system-v-and-posix-semaphores] for a discussion of the differences between POSIX and SYSV semaphores.
+
+TL;DR; POSIX semaphores are lightweight, but have failure modes when a process crashes. SystemV semaphores are "heavier", but more much more robust.
 
 ```javascript
 const { Semaphore } = require('OSiX');

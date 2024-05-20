@@ -12,9 +12,9 @@ It's crash proof: file locks and semaphores should be released by the kernel no 
 
 Built and tested on OSX. Working on a Linux build next. I have no plans to support Windows.
 
-There is no hand-holding here - these are thin wrappers over the system calls. If a call throws a system error, treat is as a warning that you've made a mistake in your implementation you should investigate.
+There is no hand-holding here - these are thin wrappers over the system calls. If a call throws a system error, treat is as a warning that you've made a mistake in your implementation you should investigate. Failed calls will throw an error with `error.code` set to a string matching the errno, just like `fs` does it.
 
-This is free software. If it breaks you get to keep both pieces. If your application is safety or mission critical, it is up to you to verify that this implementation is suitable for your needs. No liability is accepted for any use or misuse. YMMV.
+This is free software. If it breaks you get to keep both pieces. See the `LICENSE`.
 
 ## Installation
 
@@ -52,7 +52,9 @@ if (Flock.sharedNB(F.fd)) {
 Flock.unlock(F.fd);
 ```
 
-Failed calls will throw an error with `error.code` set to a string matching the errno, just like `fs` does it.
+Gotchas:
+
+TODO check again if F.readFile/F.writeFile close the file handle ...
 
 ### Semaphore
 
@@ -103,5 +105,4 @@ The `create`, `createExclusive` and `open` calls use `semget` and `semctl` under
 
 Gotchas:
 
-If the last process with the semaphore open aborts, then the semaphore will not be unlinked, although it's value will be corrected by SEM_UNDO.
-Consequently, it is most robust to use `create` to initially create a semaphore.
+If the last process with the semaphore open aborts, then the semaphore will not be unlinked, although it's value will be corrected due to the `SEM_UNDO` semantics. Consequently, it is most robust to use `create` rather than `createExclusive` as the semaphore will already exist if this happens.
